@@ -128,13 +128,13 @@ function Openlayer(props) {
     const map1 = new Map({
       controls: defaultControls().extend([new FullScreen()]),
 
-      interactions: defaultInteractions().extend([new DragRotateAndZoom()]),
+      // interactions: defaultInteractions().extend([new DragRotateAndZoom()]),
 
       target: "map",
       layers: [
         baseLayer,
         drawVector,
-        aerial,
+        // aerial,
         // new ImageLayer({
         //   source: raster,
         // }),
@@ -149,37 +149,37 @@ function Openlayer(props) {
       }),
     });
 
-    const swipe = document.getElementById("swipe");
+    // const swipe = document.getElementById("swipe");
 
-    aerial.on("prerender", function (event) {
-      const ctx = event.context;
-      const mapSize = map1.getSize();
-      const width = mapSize[0] * (swipe.value / 100);
-      const tl = getRenderPixel(event, [width, 0]);
-      const tr = getRenderPixel(event, [mapSize[0], 0]);
-      const bl = getRenderPixel(event, [width, mapSize[1]]);
-      const br = getRenderPixel(event, mapSize);
+    // aerial.on("prerender", function (event) {
+    //   const ctx = event.context;
+    //   const mapSize = map1.getSize();
+    //   const width = mapSize[0] * (swipe.value / 100);
+    //   const tl = getRenderPixel(event, [width, 0]);
+    //   const tr = getRenderPixel(event, [mapSize[0], 0]);
+    //   const bl = getRenderPixel(event, [width, mapSize[1]]);
+    //   const br = getRenderPixel(event, mapSize);
 
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(tl[0], tl[1]);
-      ctx.lineTo(bl[0], bl[1]);
-      ctx.lineTo(br[0], br[1]);
-      ctx.lineTo(tr[0], tr[1]);
-      ctx.closePath();
-      ctx.clip();
-    });
+    //   ctx.save();
+    //   ctx.beginPath();
+    //   ctx.moveTo(tl[0], tl[1]);
+    //   ctx.lineTo(bl[0], bl[1]);
+    //   ctx.lineTo(br[0], br[1]);
+    //   ctx.lineTo(tr[0], tr[1]);
+    //   ctx.closePath();
+    //   ctx.clip();
+    // });
 
-    aerial.on("postrender", function (event) {
-      const ctx = event.context;
-      ctx.restore();
-    });
+    // aerial.on("postrender", function (event) {
+    //   const ctx = event.context;
+    //   ctx.restore();
+    // });
 
-    const listener = function () {
-      map1.render();
-    };
-    swipe.addEventListener("input", listener);
-    swipe.addEventListener("change", listener);
+    // const listener = function () {
+    //   map1.render();
+    // };
+    // swipe.addEventListener("input", listener);
+    // swipe.addEventListener("change", listener);
 
     // const vectorHeatmap = new HeatmapLayer({
     //   source: new VectorSource({
@@ -274,7 +274,7 @@ function Openlayer(props) {
           className="map"
           style={{ height: "90vh", width: "98%" }}
         ></div>
-        <input id="swipe" type="range" style={{ width: "100%" }} />
+        {/* <input id="swipe" type="range" style={{ width: "100%" }} /> */}
       </div>
       {/* <select id="type" style={{ marginBottom: "500px" }}>
         <option value="Point">Point</option>
