@@ -21,13 +21,13 @@ function ViewerTabs(props) {
           <li>Export view</li>
         </ul>
       </li>
-      <li className="in">
+      {/* <li className="in">
         controls
         <ul className="sub1">
           <li>Drag</li>
           <li>Rotate</li>
         </ul>
-      </li>
+      </li> */}
       <li className="in">
         color Manipulations
         <ColourManipulation map={map} baseLayer={baseLayer} />

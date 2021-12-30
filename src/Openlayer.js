@@ -28,6 +28,8 @@ import Feature from "ol/Feature";
 // import { raster } from "./ColourManipulationsFunction";
 import ImageLayer from "ol/layer/Image";
 
+import { getRenderPixel } from "ol/render";
+
 // import "ol/ol.css";
 
 import "./map.css";
@@ -55,7 +57,7 @@ function Openlayer(props) {
       // url: pic,
       // url: "https://www.w3schools.com/howto/img_avatar.png",
       // url: "http://localhost:8000/v1/{z}/{x}/{y}.png",
-      url: "http://localhost:8000/img2/{z}/{x}_{y}.jpeg",
+      url: "https://gslimageserver.herokuapp.com/img2/{z}/{x}_{y}.jpeg",
       // crossOrigin: "anonymous",
       // transition: 0,
       crossOrigin: "anonymous",
@@ -68,7 +70,7 @@ function Openlayer(props) {
 
       useInterimTilesOnError: false,
       minZoom: -1,
-      maxZoom: 15,
+      // maxZoom: 15,
     });
 
     const drawSource = new VectorSource();
@@ -108,6 +110,21 @@ function Openlayer(props) {
     //   },
     // });
 
+    const aerial = new TileLayer({
+      source: new XYZ({
+        url: "http://localhost:8000/img2/{z}/{x}_{y}.jpeg",
+        crossOrigin: "anonymous",
+
+        tileSize: 512,
+        wrapX: false,
+      }),
+      useInterimTilesOnError: false,
+      minZoom: -1,
+      // maxZoom: 15,
+    });
+
+    // const aerial = baseLayer;
+
     const map1 = new Map({
       controls: defaultControls().extend([new FullScreen()]),
 
@@ -117,6 +134,7 @@ function Openlayer(props) {
       layers: [
         baseLayer,
         drawVector,
+        aerial,
         // new ImageLayer({
         //   source: raster,
         // }),
@@ -124,9 +142,44 @@ function Openlayer(props) {
       view: new View({
         center: fromLonLat([-179.569898, 85.03]),
         zoom: 10,
+        maxZoom: 15,
+        constrainOnlyCenter: true,
+
         multiWorld: true,
       }),
     });
+
+    const swipe = document.getElementById("swipe");
+
+    aerial.on("prerender", function (event) {
+      const ctx = event.context;
+      const mapSize = map1.getSize();
+      const width = mapSize[0] * (swipe.value / 100);
+      const tl = getRenderPixel(event, [width, 0]);
+      const tr = getRenderPixel(event, [mapSize[0], 0]);
+      const bl = getRenderPixel(event, [width, mapSize[1]]);
+      const br = getRenderPixel(event, mapSize);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(tl[0], tl[1]);
+      ctx.lineTo(bl[0], bl[1]);
+      ctx.lineTo(br[0], br[1]);
+      ctx.lineTo(tr[0], tr[1]);
+      ctx.closePath();
+      ctx.clip();
+    });
+
+    aerial.on("postrender", function (event) {
+      const ctx = event.context;
+      ctx.restore();
+    });
+
+    const listener = function () {
+      map1.render();
+    };
+    swipe.addEventListener("input", listener);
+    swipe.addEventListener("change", listener);
 
     // const vectorHeatmap = new HeatmapLayer({
     //   source: new VectorSource({
@@ -219,8 +272,9 @@ function Openlayer(props) {
         <div
           id="map"
           className="map"
-          style={{ height: "94.5vh", width: "98%" }}
+          style={{ height: "90vh", width: "98%" }}
         ></div>
+        <input id="swipe" type="range" style={{ width: "100%" }} />
       </div>
       {/* <select id="type" style={{ marginBottom: "500px" }}>
         <option value="Point">Point</option>
